@@ -20,10 +20,35 @@ app.get("/", function (req, res) {
 
 
 // your first API endpoint... 
-app.get("/api/hello", function (req, res) {
-  res.json({greeting: 'hello API'});
+app.get("/api", function (req, res) {
+  let today=new Date()
+       let todayUnix=today.getTime()
+      let todayUtc=today.toUTCString()
+      res.send({unix:todayUnix,
+             utc:todayUtc
+            })
 });
 
+app.get('/api/:date',(req,res)=>{
+  //  error handling 
+  if(!Date.parse(req.params.date) && !Number(req.params.date))
+  {
+    return res.send({error: "Invalid Date"});
+  }
+  // returnig when the time is uix based
+  else if(!(/[-]/.test(req.params.date)) && Number(req.params.date)){
+      let date=req.params.date
+     var utc = new Date(Number(req.params.date));
+  return  res.send({unix:Number(date),
+             utc:utc.toUTCString()
+            })
+  }
+      // returnig when the time is not  uix based
+    let getDate=new  Date(req.params.date)
+        res.status(200).send({
+      unix:Number(getDate.getTime()),
+      utc:getDate.toUTCString()} )
+})
 
 
 // listen for requests :)
